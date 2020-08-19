@@ -8,6 +8,8 @@ import (
 )
 
 func main() {
+    connectAndInitialize()
+
     openCommand := flag.NewFlagSet("open", flag.ExitOnError)
     searchCommand := flag.NewFlagSet("search", flag.ExitOnError)
     moveCommand := flag.NewFlagSet("move", flag.ExitOnError)
