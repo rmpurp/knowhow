@@ -1,11 +1,11 @@
 build:
-	$${HOME}/go/bin/packr build
+	$${HOME}/go/bin/packr build  --tags "fts5"
 
 run:
 	./knowhow search
 
 clean:
-	rm debug.db knowhow
+	rm -f debug.db knowhow
 
-all: build run
+all: clean build run
 

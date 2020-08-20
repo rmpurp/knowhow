@@ -1,27 +1,52 @@
 package main
 
 import (
-    "log"
-    "github.com/gobuffalo/packr"
-    "database/sql"
-    _ "github.com/mattn/go-sqlite3"
+	"database/sql"
+	"github.com/gobuffalo/packr"
+	_ "github.com/mattn/go-sqlite3"
 )
 
-func connectAndInitialize() *sql.DB {
-    database, err := sql.Open("sqlite3", "./debug.db")
+func createFixtures(db *sql.DB) error {
+	box := packr.NewBox("./database_scripts")
+	script, err := box.FindString("create_fixtures.sql")
 
-    if err != nil {
-        log.Fatal(err)
-    }
+	if err != nil {
+		return err
+	}
 
-    box := packr.NewBox("./database_scripts")
-    script, err := box.FindString("create_database.sql")
-    database.Exec(script)
+	_, err = db.Exec(script)
 
-    if err != nil {
-        log.Fatal(err)
-    }
+	if err != nil {
+		return err
+	}
 
-    return database
+	return nil
 }
 
+func connectAndInitialize() (*sql.DB, error) {
+	database, err := sql.Open("sqlite3", "./debug.db")
+
+	if err != nil {
+		return nil, err
+	}
+
+	box := packr.NewBox("./database_scripts")
+
+	script, err := box.FindString("create_database.sql")
+
+	if err != nil {
+		return database, err
+	}
+
+	_, err = database.Exec(script)
+
+	if err != nil {
+		return database, err
+	}
+
+	return database, nil
+}
+
+func addArticle(title string) bool {
+	return true
+}

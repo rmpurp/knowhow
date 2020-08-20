@@ -1,47 +1,65 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-    "flag"
-    "os"
 	_ "github.com/mattn/go-sqlite3"
+	"log"
+	"os"
 )
 
 func main() {
-    connectAndInitialize()
+	db, err := connectAndInitialize()
 
-    openCommand := flag.NewFlagSet("open", flag.ExitOnError)
-    searchCommand := flag.NewFlagSet("search", flag.ExitOnError)
-    moveCommand := flag.NewFlagSet("move", flag.ExitOnError)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-    switch os.Args[1] {
-    case "o":
-        fallthrough
-    case "open":
-        openCommand.Parse(os.Args[2:])
-    case "s":
-        fallthrough
-    case "search":
-        searchCommand.Parse(os.Args[2:])
-    case "m":
-        fallthrough
-    case "move":
-        moveCommand.Parse(os.Args[2:])
-    default:
-        flag.PrintDefaults()
-        os.Exit(1)
-    }
+	err = createFixtures(db)
 
-    if openCommand.Parsed() {
-        fmt.Println("open")
-    }
+	if err != nil {
+		log.Fatal(err)
+	}
 
-    if searchCommand.Parsed() {
-        fmt.Println("search")
-    }
+	editCommand := flag.NewFlagSet("edit", flag.ExitOnError)
+	openCommand := flag.NewFlagSet("open", flag.ExitOnError)
+	searchCommand := flag.NewFlagSet("search", flag.ExitOnError)
+	moveCommand := flag.NewFlagSet("move", flag.ExitOnError)
 
-    if moveCommand.Parsed() {
-        fmt.Println("move")
-    }
+	switch os.Args[1] {
+	case "o":
+		fallthrough
+	case "edit":
+		editCommand.Parse(os.Args[2:])
+	case "open":
+		openCommand.Parse(os.Args[2:])
+	case "s":
+		fallthrough
+	case "search":
+		searchCommand.Parse(os.Args[2:])
+	case "m":
+		fallthrough
+	case "move":
+		moveCommand.Parse(os.Args[2:])
+	default:
+		flag.PrintDefaults()
+		os.Exit(1)
+	}
+
+	if editCommand.Parsed() {
+		fmt.Println("edit")
+		//        _ = createArticle()
+	}
+
+	if openCommand.Parsed() {
+		fmt.Println("open")
+	}
+
+	if searchCommand.Parsed() {
+		fmt.Println("search")
+	}
+
+	if moveCommand.Parsed() {
+		fmt.Println("move")
+	}
 }
-
