@@ -4,9 +4,9 @@ import (
 	"flag"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/rmpurp/knowhow/cli"
 	"log"
 	"os"
-    "github.com/rmpurp/knowhow/cli"
 )
 
 func main() {
@@ -49,8 +49,8 @@ func main() {
 
 	if editCommand.Parsed() {
 		fmt.Println("edit")
-        edited, _ := cli.EditText("TEST TEST \nTEST TEST2")
-        fmt.Println(edited)
+		edited, _ := cli.EditText("TEST TEST \nTEST TEST2")
+		fmt.Println(edited)
 	}
 
 	if openCommand.Parsed() {
