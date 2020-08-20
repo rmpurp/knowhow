@@ -48,7 +48,7 @@ func main() {
 
 	if editCommand.Parsed() {
 		fmt.Println("edit")
-		//        _ = createArticle()
+		edited, _ = EditText("TEST TEST \nTEST TEST2")
 	}
 
 	if openCommand.Parsed() {
@@ -62,4 +62,5 @@ func main() {
 	if moveCommand.Parsed() {
 		fmt.Println("move")
 	}
+
 }
