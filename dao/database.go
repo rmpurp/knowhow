@@ -46,4 +46,3 @@ func ConnectAndInitialize(filename string) (*sql.DB, error) {
 
 	return database, nil
 }
-

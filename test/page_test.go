@@ -3,12 +3,9 @@ package test
 import (
 	"github.com/rmpurp/knowhow/dao"
 	"github.com/rmpurp/knowhow/models"
+	"os"
 	"testing"
 )
-import (
-	"os"
-)
-
 
 func TestPageCreation(t *testing.T) {
 	_ = os.Remove("./test.db")

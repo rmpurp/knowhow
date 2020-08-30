@@ -12,7 +12,7 @@ type PageDao interface {
 	GetByID(id int64, connection *sql.DB) (*models.Page, error)
 }
 
-type PageDaoImpl struct { }
+type PageDaoImpl struct{}
 
 func (dao PageDaoImpl) InsertOrUpdate(page *models.Page, connection *sql.DB) error {
 	if page.IsInserted {
