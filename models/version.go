@@ -3,9 +3,9 @@ package models
 import "time"
 
 type Version struct {
-	ID            int
+	ID            int64
 	DateCreated   time.Time
-	PageID        int
-	PageContentID int
+	PageID        int64
+	PageContentID int64
 	IsInserted    bool
 }
