@@ -1,4 +1,4 @@
-package main
+package dao
 
 import (
 	"database/sql"
@@ -6,7 +6,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-func createFixtures(db *sql.DB) error {
+func CreateFixtures(db *sql.DB) error {
 	box := packr.NewBox("./database_scripts")
 	script, err := box.FindString("create_fixtures.sql")
 
@@ -23,8 +23,8 @@ func createFixtures(db *sql.DB) error {
 	return nil
 }
 
-func connectAndInitialize() (*sql.DB, error) {
-	database, err := sql.Open("sqlite3", "./debug.db")
+func ConnectAndInitialize(filename string) (*sql.DB, error) {
+	database, err := sql.Open("sqlite3", filename)
 
 	if err != nil {
 		return nil, err
@@ -47,6 +47,3 @@ func connectAndInitialize() (*sql.DB, error) {
 	return database, nil
 }
 
-func addArticle(title string) bool {
-	return true
-}

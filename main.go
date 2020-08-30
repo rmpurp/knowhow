@@ -5,18 +5,19 @@ import (
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 	"github.com/rmpurp/knowhow/cli"
+	"github.com/rmpurp/knowhow/dao"
 	"log"
 	"os"
 )
 
 func main() {
-	db, err := connectAndInitialize()
+	db, err := dao.ConnectAndInitialize("./debug.db")
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = createFixtures(db)
+	err = dao.CreateFixtures(db)
 
 	if err != nil {
 		log.Fatal(err)

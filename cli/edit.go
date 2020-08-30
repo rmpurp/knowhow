@@ -9,6 +9,7 @@ import (
 
 const defaultEditor = "vim"
 
+// Obtains a handle on a temporary file with the given extension.
 func getTemporaryFile(extension string) (*os.File, error) {
 	file, err := ioutil.TempFile("", fmt.Sprintf("*.%s", extension))
 	if err != nil {
@@ -18,6 +19,7 @@ func getTemporaryFile(extension string) (*os.File, error) {
 	return file, nil
 }
 
+// Opens the file referred to in the filepath in the user's preferred editor.
 func openFileInEditor(filepath string) error {
 	editor := os.Getenv("EDITOR")
 	if editor == "" {
@@ -38,6 +40,8 @@ func openFileInEditor(filepath string) error {
 	return cmd.Run()
 }
 
+// Opens the user's preferred editor with the given text already inserted.
+// Returns the final state of the file when it is saved.
 func EditText(text string) (string, error) {
 	file, err := getTemporaryFile("md")
 
