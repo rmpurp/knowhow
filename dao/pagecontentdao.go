@@ -72,7 +72,7 @@ func (dao PageContentDaoImpl) GetByID(id int64, connection *sql.Tx) (*models.Pag
 }
 
 func (dao PageContentDaoImpl) FindBySearchString(searchString string, connection *sql.Tx) ([]*models.PageContent, error) {
-	query := "SELECT rowid, title, article FROM pageContent WHERE pageContent = ?"
+	query := "SELECT c.rowid, c.title, c.article FROM pageContent c LEFT OUTER JOIN Versions v ON c.ROWID == v.pageContentID WHERE c.pageContent = ? AND COALESCE(v.isCurrentVersion, 1) order by rank"
 	rows, err := connection.Query(query, searchString)
 
 	if err != nil {

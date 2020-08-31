@@ -31,7 +31,7 @@ func (dao VersionDaoImpl) InsertOrUpdate(version *models.Version, connection *sq
 		query := "UPDATE versions SET dateCreated = ?, pageID = ?, pageContentID = ?, isCurrentVersion = ? WHERE id = ?"
 		_, err := connection.Exec(
 			query,
-			version.DateCreated.Unix(),
+			version.DateCreated.UnixNano(),
 			version.PageID,
 			version.PageContentID,
 			version.IsCurrentVersion,
@@ -42,7 +42,7 @@ func (dao VersionDaoImpl) InsertOrUpdate(version *models.Version, connection *sq
 		query := "INSERT INTO versions (dateCreated, pageID, pageContentID, isCurrentVersion) VALUES (?, ?, ?, ?)"
 		result, err := connection.Exec(
 			query,
-			version.DateCreated.Unix(),
+			version.DateCreated.UnixNano(),
 			version.PageID,
 			version.PageContentID,
 			version.IsCurrentVersion,
@@ -71,6 +71,37 @@ func (dao VersionDaoImpl) Delete(version *models.Version, connection *sql.Tx) er
 	return err
 }
 
+func (dao VersionDaoImpl) GetByPageContentID(pageContentId int64, connection *sql.Tx) (*models.Version, error) {
+	query := "SELECT id, dateCreated, pageID, pageContentID, isCurrentVersion FROM versions WHERE pageContentID = ?"
+	rows, err := connection.Query(query, pageContentId)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var newID, dateCreated, pageID, pageContentID int64
+		var isCurrentVersion bool
+		err = rows.Scan(&newID, &dateCreated, &pageID, &pageContentID, &isCurrentVersion)
+
+		if err != nil {
+			return nil, err
+		}
+
+		version := models.Version{
+			ID:               newID,
+			DateCreated:      time.Unix(0, dateCreated),
+			PageID:           pageID,
+			PageContentID:    pageContentID,
+			IsInserted:       true,
+			IsCurrentVersion: isCurrentVersion,
+		}
+
+		return &version, nil
+	}
+
+	return nil, errors.New("no version corresponding to that page id")
+}
+
 func (dao VersionDaoImpl) GetByID(id int64, connection *sql.Tx) (*models.Version, error) {
 	query := "SELECT id, dateCreated, pageID, pageContentID, isCurrentVersion FROM versions WHERE id = ?"
 	rows, err := connection.Query(query, id)
@@ -89,7 +120,7 @@ func (dao VersionDaoImpl) GetByID(id int64, connection *sql.Tx) (*models.Version
 
 		version := models.Version{
 			ID:               newID,
-			DateCreated:      time.Unix(dateCreated, 0),
+			DateCreated:      time.Unix(0, dateCreated),
 			PageID:           pageID,
 			PageContentID:    pageContentID,
 			IsInserted:       true,

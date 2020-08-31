@@ -120,7 +120,7 @@ func TestVersionCreation(t *testing.T) {
 
 	dao := dao.VersionDaoImpl{}
 	version := &models.Version{
-		DateCreated:      time.Unix(123417239841, 0),
+		DateCreated:      time.Unix(10000, 0),
 		PageID:           42,
 		PageContentID:    21,
 		IsCurrentVersion: true,

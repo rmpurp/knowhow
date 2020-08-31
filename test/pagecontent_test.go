@@ -96,8 +96,8 @@ func TestPageContentCreation(t *testing.T) {
 	}
 
 	pageContent := &models.PageContent{
-		Title:      "Git Subtrees",
-		Article:    "Git subtrees are quite useful",
+		Title:   "Git Subtrees",
+		Article: "Git subtrees are quite useful",
 	}
 
 	err = pageDao.InsertOrUpdate(pageContent, tx)
@@ -135,4 +135,3 @@ func TestPageContentCreation(t *testing.T) {
 		t.Errorf("%+v != %+v", fetchedPageContent, pageContent)
 	}
 }
-
