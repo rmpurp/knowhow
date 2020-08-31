@@ -7,21 +7,19 @@ import (
 )
 
 type PageDao interface {
-	InsertOrUpdate(user *models.Page, connection *sql.DB) error
-	Delete(user *models.Page, connection *sql.DB) error
-	GetByID(id int64, connection *sql.DB) (*models.Page, error)
+	InsertOrUpdate(user *models.Page, connection *sql.Tx) error
+	Delete(user *models.Page, connection *sql.Tx) error
+	GetByID(id int64, connection *sql.Tx) (*models.Page, error)
 }
 
 type PageDaoImpl struct{}
 
-func (dao PageDaoImpl) InsertOrUpdate(page *models.Page, connection *sql.DB) error {
+func (dao PageDaoImpl) InsertOrUpdate(page *models.Page, connection *sql.Tx) error {
 	if page.IsInserted {
-		query := "UPDATE pages SET currentVersion = ? WHERE id = ?"
-		_, err := connection.Exec(query, page.CurrentVersion, page.ID)
-		return err
+		return errors.New("page already inserted and is immutable")
 	} else {
-		query := "INSERT INTO pages (currentVersion) VALUES (?)"
-		result, err := connection.Exec(query, page.CurrentVersion)
+		query := "INSERT INTO pages (id) VALUES (null)"
+		result, err := connection.Exec(query)
 		if err != nil {
 			return err
 		} else {
@@ -36,7 +34,7 @@ func (dao PageDaoImpl) InsertOrUpdate(page *models.Page, connection *sql.DB) err
 	}
 }
 
-func (dao PageDaoImpl) Delete(user *models.Page, connection *sql.DB) error {
+func (dao PageDaoImpl) Delete(user *models.Page, connection *sql.Tx) error {
 	if !user.IsInserted {
 		return errors.New("this page hasn't been inserted yet")
 	}
@@ -45,8 +43,8 @@ func (dao PageDaoImpl) Delete(user *models.Page, connection *sql.DB) error {
 	return err
 }
 
-func (dao PageDaoImpl) GetByID(id int64, connection *sql.DB) (*models.Page, error) {
-	query := "SELECT id, currentVersion FROM pages WHERE id = ?"
+func (dao PageDaoImpl) GetByID(id int64, connection *sql.Tx) (*models.Page, error) {
+	query := "SELECT id FROM pages WHERE id = ?"
 	rows, err := connection.Query(query, id)
 	if err != nil {
 		return nil, err
@@ -54,14 +52,13 @@ func (dao PageDaoImpl) GetByID(id int64, connection *sql.DB) (*models.Page, erro
 
 	for rows.Next() {
 		var newID int64
-		var currentVersion int64
-		err = rows.Scan(&newID, &currentVersion)
+		err = rows.Scan(&newID)
 
 		if err != nil {
 			return nil, err
 		}
 
-		page := models.Page{ID: newID, CurrentVersion: currentVersion, IsInserted: true}
+		page := models.Page{ID: newID, IsInserted: true}
 
 		return &page, nil
 	}

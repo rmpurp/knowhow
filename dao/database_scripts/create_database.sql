@@ -1,7 +1,11 @@
 CREATE TABLE IF NOT EXISTS pages(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    currentVersion INTEGER,
-    FOREIGN KEY (currentVersion) REFERENCES versions(id)
+    id INTEGER PRIMARY KEY AUTOINCREMENT
+);
+
+
+CREATE VIRTUAL TABLE IF NOT EXISTS pageContent USING fts5(
+    title,
+    article
 );
 
 CREATE TABLE IF NOT EXISTS versions(
@@ -9,11 +13,8 @@ CREATE TABLE IF NOT EXISTS versions(
     dateCreated INTEGER,
     pageID INTEGER,
     pageContentID INTEGER,
-    FOREIGN KEY(pageID) REFERENCES pages(rowid)
-);
-
-CREATE VIRTUAL TABLE IF NOT EXISTS pageContent USING fts5(
-    title,
-    article
+    isCurrentVersion BOOLEAN,
+    FOREIGN KEY(pageID) REFERENCES pages(id),
+    FOREIGN KEY(pageContentID) REFERENCES pageContent(rowid)
 );
 

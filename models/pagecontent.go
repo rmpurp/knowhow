@@ -1,7 +1,8 @@
 package models
 
 type PageContent struct {
-	title      string
-	article    string
+	ID         int64
+	Title      string
+	Article    string
 	IsInserted bool
 }

@@ -15,8 +15,13 @@ func TestPageCreation(t *testing.T) {
 	}
 
 	dao := dao.PageDaoImpl{}
-	page := &models.Page{CurrentVersion: 4}
-	err = dao.InsertOrUpdate(page, connection)
+	page := &models.Page{}
+
+	tx, err := connection.Begin()
+
+	err = dao.InsertOrUpdate(page, tx)
+
+	tx.Commit()
 
 	if err != nil {
 		t.Errorf("error inserting")
@@ -30,13 +35,19 @@ func TestPageCreation(t *testing.T) {
 		t.Errorf("page id is %d when it should be %d", page.ID, 1)
 	}
 
-	returnedPage, err := dao.GetByID(page.ID, connection)
+	tx, err = connection.Begin()
+
+	returnedPage, err := dao.GetByID(page.ID, tx)
+
+	tx.Commit()
 
 	if err != nil {
 		t.Errorf("Fetching returned an error")
 	}
 
-	if *returnedPage != *page {
+	if returnedPage == nil {
+		t.Errorf("returned page is nil")
+	} else if *returnedPage != *page {
 		t.Errorf("%+v != %+v", page, returnedPage)
 	}
 
